@@ -297,14 +297,14 @@ function containsSubstring(str, substring) {
  *   countVowels('XYZ') => 1
  */
 function countVowels(str) {
-  let sum = 0;
   const vowels = ['a', 'e', 'i', 'o', 'u', 'y', 'A', 'E', 'I', 'O', 'U', 'Y'];
-
-  for (const char of str) {
+  const sum = str.split('').reduce((count, char) => {
     if (vowels.includes(char)) {
-      sum += 1;
+      return count + 1;
     }
-  }
+    return count;
+  }, 0);
+
   return sum;
 }
 
@@ -322,13 +322,9 @@ function countVowels(str) {
  *   isPalindrome('No lemon, no melon') => true
  */
 function isPalindrome(str) {
-  const arr1 = [];
-  const arr2 = [];
-  for (const char in str) {
-    arr1.push(str[char]);
-    arr2.push(str[char]);
-  }
-  const result = (JSON.stringify(arr1) === JSON.stringify(arr2.reverse()));
+  const arr1 = [...str];
+  const arr2 = [...str].reverse();
+  const result = JSON.stringify(arr1) === JSON.stringify(arr2);
   return result;
 }
 
@@ -349,12 +345,14 @@ function findLongestWord(sentence) {
   let wordLength = 0;
   let wordLongest = '';
 
-  for (const word of arr) {
+  wordLongest = arr.filter((word) => {
     if (word.length > wordLength) {
       wordLength = word.length;
       wordLongest = word;
     }
-  }
+    return wordLongest;
+  });
+
   return wordLongest;
 }
 
@@ -388,12 +386,12 @@ function invertCase(str) {
   const result = str.split('').map((char) => {
     if (char.charCodeAt(0) >= 97 && char.charCodeAt(0) <= 122) {
       return char.toUpperCase();
-    } 
-    if(char.charCodeAt(0) >= 65 && char.charCodeAt(0) <= 90) {
+    }
+    if (char.charCodeAt(0) >= 65 && char.charCodeAt(0) <= 90) {
       return char.toLowerCase();
     }
     return char;
-  })
+  });
   return result.join('');
 }
 
@@ -425,7 +423,7 @@ function getStringFromTemplate(firstName, lastName) {
  *   extractNameFromTemplate('Hello, Chuck Norris!') => 'Chuck Norris'
  */
 function extractNameFromTemplate(value) {
-  const arr = value.split(', ');
+  let arr = value.split(', ');
   arr = arr[1].split('').slice(0, -1).join('');
   return arr;
 }
@@ -465,15 +463,9 @@ function unbracketTag(str) {
  */
 function extractEmails(str) {
   const arr = str.split(';');
-  const validation = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/;
-  const result = [];
-  
-  for(let item of arr) {
-    if(validation.test(item)) {
-      result.push(item);
-    }
-  }
-
+  const validation =
+    /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/;
+  const result = arr.filter((item) => validation.test(item));
   return result;
 }
 
@@ -495,16 +487,15 @@ function extractEmails(str) {
  */
 function encodeToRot13(str) {
   let newString = '';
-  for(let i = 0; i < str.length; i++) {
+  for (let i = 0; i < str.length; i + 1) {
     let letterCode = str.charCodeAt(i);
-    if (letterCode >= 65 && letterCode <= 90) { 
-      letterCode = 65 + ((letterCode - 65) + 13) % 26;
+    if (letterCode >= 65 && letterCode <= 90) {
+      letterCode = 65 + ((letterCode - 65 + 13) % 26);
     }
     if (letterCode >= 97 && letterCode <= 122) {
-      letterCode = 97 + ((letterCode - 97) + 13) % 26;
+      letterCode = 97 + ((letterCode - 97 + 13) % 26);
     }
     newString += String.fromCharCode(letterCode);
-    
   }
   return newString;
 }
@@ -535,23 +526,59 @@ function encodeToRot13(str) {
  */
 function getCardId(value) {
   const arr = [
-  'A♣','2♣','3♣',
-  '4♣','5♣','6♣',
-  '7♣','8♣','9♣',
-  '10♣','J♣','Q♣',
-  'K♣','A♦','2♦',
-  '3♦','4♦','5♦',
-  '6♦','7♦','8♦',
-  '9♦','10♦','J♦',
-  'Q♦','K♦','A♥',
-  '2♥','3♥','4♥',
-  '5♥','6♥','7♥',
-  '8♥','9♥','10♥',
-  'J♥','Q♥','K♥',
-  'A♠','2♠','3♠',
-  '4♠','5♠','6♠',
-  '7♠','8♠','9♠',
-  '10♠','J♠','Q♠','K♠'];
+    'A♣',
+    '2♣',
+    '3♣',
+    '4♣',
+    '5♣',
+    '6♣',
+    '7♣',
+    '8♣',
+    '9♣',
+    '10♣',
+    'J♣',
+    'Q♣',
+    'K♣',
+    'A♦',
+    '2♦',
+    '3♦',
+    '4♦',
+    '5♦',
+    '6♦',
+    '7♦',
+    '8♦',
+    '9♦',
+    '10♦',
+    'J♦',
+    'Q♦',
+    'K♦',
+    'A♥',
+    '2♥',
+    '3♥',
+    '4♥',
+    '5♥',
+    '6♥',
+    '7♥',
+    '8♥',
+    '9♥',
+    '10♥',
+    'J♥',
+    'Q♥',
+    'K♥',
+    'A♠',
+    '2♠',
+    '3♠',
+    '4♠',
+    '5♠',
+    '6♠',
+    '7♠',
+    '8♠',
+    '9♠',
+    '10♠',
+    'J♠',
+    'Q♠',
+    'K♠',
+  ];
 
   return arr.indexOf(value);
 }
