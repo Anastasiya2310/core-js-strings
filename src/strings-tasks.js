@@ -20,7 +20,10 @@
  *   getStringLength(undefined) => 0
  */
 function getStringLength(str) {
-  return str.length;
+  if (typeof str === 'string') {
+    return str.length;
+  }
+  return 0;
 }
 
 /**
@@ -38,7 +41,7 @@ function getStringLength(str) {
  *   isString(new String('test')) => true
  */
 function isString(str) {
-  return typeof str === 'string';
+  return typeof str === 'string' || str instanceof String;
 }
 
 /**
@@ -54,7 +57,7 @@ function isString(str) {
  *   concatenateStrings('', 'bb') => 'bb'
  */
 function concatenateStrings(value1, value2) {
-  return value1 + value2;
+  return value1.concat(value2);
 }
 
 /**
@@ -131,6 +134,9 @@ function removeTrailingWhitespaces(str) {
  *   repeatString('abc', -2) => ''
  */
 function repeatString(str, times) {
+  if (times <= 0) {
+    return '';
+  }
   return str.repeat(times);
 }
 
@@ -147,9 +153,12 @@ function repeatString(str, times) {
  *   removeFirstOccurrences('ABABAB', 'BA') => 'ABAB'.
  */
 function removeFirstOccurrences(str, value) {
-  const lastIndex = str.lastIndexOf(value);
-  const stringStart = str.slice(0, lastIndex);
-  const stringEnd = str.slice(lastIndex + value.length);
+  const firstIndex = str.indexOf(value);
+  if (firstIndex === -1) {
+    return str;
+  }
+  const stringStart = str.slice(0, firstIndex);
+  const stringEnd = str.slice(firstIndex + value.length);
   const result = stringStart + stringEnd;
   return result;
 }
@@ -167,7 +176,14 @@ function removeFirstOccurrences(str, value) {
  *   removeLastOccurrences('ABABAB', 'BA') => 'ABAB'.
  */
 function removeLastOccurrences(str, value) {
-  return str.lastIndexOf(value);
+  const lastIndex = str.lastIndexOf(value);
+  if (lastIndex === -1) {
+    return str;
+  }
+  const stringStart = str.slice(0, lastIndex);
+  const stringEnd = str.slice(lastIndex + value.length);
+  const result = stringStart + stringEnd;
+  return result;
 }
 
 /**
@@ -183,6 +199,9 @@ function removeLastOccurrences(str, value) {
  *   sumOfCodes() => 0
  */
 function sumOfCodes(str) {
+  if (typeof str !== 'string') {
+    return 0;
+  }
   let sum = 0;
   for (let i = 0; i < str.length; i += 1) {
     sum += str[i].charCodeAt();
@@ -234,7 +253,9 @@ function endsWith(str, substr) {
  *   formatTime(0, 0) => "00:00"
  */
 function formatTime(minutes, seconds) {
-  return `0${minutes}:${seconds}`;
+  return `${minutes.toString().padStart(2, '0')}:${seconds
+    .toString()
+    .padStart(2, '0')}`;
 }
 
 /**
@@ -322,8 +343,9 @@ function countVowels(str) {
  *   isPalindrome('No lemon, no melon') => true
  */
 function isPalindrome(str) {
-  const arr1 = [...str];
-  const arr2 = [...str].reverse();
+  const word = str.toLowerCase().replace(/[^a-z]/g, '');
+  const arr1 = [...word];
+  const arr2 = [...word].reverse();
   const result = JSON.stringify(arr1) === JSON.stringify(arr2);
   return result;
 }
@@ -344,13 +366,11 @@ function findLongestWord(sentence) {
   const arr = sentence.split(' ');
   let wordLength = 0;
   let wordLongest = '';
-
-  wordLongest = arr.filter((word) => {
+  arr.forEach((word) => {
     if (word.length > wordLength) {
       wordLength = word.length;
       wordLongest = word;
     }
-    return wordLongest;
   });
 
   return wordLongest;
@@ -367,8 +387,10 @@ function findLongestWord(sentence) {
  *   reverseWords('The Quick Brown Fox') => 'ehT kciuQ nworB xoF'
  */
 function reverseWords(str) {
-  const result = str.split('').reverse().join('');
-  return result;
+  return str
+    .split(' ')
+    .map((x) => x.split('').reverse().join(''))
+    .join(' ');
 }
 
 /**
@@ -487,7 +509,7 @@ function extractEmails(str) {
  */
 function encodeToRot13(str) {
   let newString = '';
-  for (let i = 0; i < str.length; i + 1) {
+  for (let i = 0; i < str.length; i += 1) {
     let letterCode = str.charCodeAt(i);
     if (letterCode >= 65 && letterCode <= 90) {
       letterCode = 65 + ((letterCode - 65 + 13) % 26);
